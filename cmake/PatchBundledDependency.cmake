@@ -1,0 +1,16 @@
+# Apply small compatibility fixes to pinned CPM sources on every configuration,
+# including dependencies already downloaded into an existing build directory.
+function(klogg_patch_bundled_dependency path old_text new_text)
+  file(READ "${path}" contents)
+  string(FIND "${contents}" "${new_text}" new_position)
+  if(NOT new_position EQUAL -1)
+    return()
+  endif()
+  string(FIND "${contents}" "${old_text}" old_position)
+  if(NOT old_position EQUAL -1)
+    string(REPLACE "${old_text}" "${new_text}" contents "${contents}")
+    file(WRITE "${path}" "${contents}")
+  else()
+    message(FATAL_ERROR "Cannot apply compatibility fix to ${path}: expected text not found")
+  endif()
+endfunction()
